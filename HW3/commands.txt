@@ -1,0 +1,51 @@
+make
+sudo insmod message_slot.ko
+dmesg
+sudo mknod /dev/msgslot1 c 235 1
+sudo chmod o+rw /dev/msgslot1
+gcc -O3  -Wall -std=c11 message_sender.c -o message_sender
+gcc -O3  -Wall -std=c11 message_reader.c -o message_reader
+./message_sender /dev/msgslot1 4 "Hello this is channel 4"
+./message_reader /dev/msgslot1 4
+
+
+sudo rmmod message_slot
+sudo rm /dev/msgslot1
+
+
+
+gcc -O3 -Wall -std=c11 tester.c -o tester
+sudo insmod message_slot.ko
+sudo mknod /dev/msgslot1 c 235 1
+sudo chmod o+rw /dev/msgslot1
+./tester /dev/msgslot1
+
+
+
+sudo rmmod message_slot
+sudo rm /dev/msgslot1
+
+
+
+gcc -O3 -Wall -std=c11 tester2.c -o tester2
+sudo insmod message_slot.ko
+sudo mknod /dev/msgslot1 c 235 1 
+sudo chmod o+rw /dev/msgslot1 
+./tester2 /dev/msgslot1 
+
+
+sudo rmmod message_slot
+sudo rm /dev/msgslot1
+
+
+sudo apt-get update
+sudo apt install python3-pip
+pip3 install colorama
+
+
+gcc -O3 -Wall -std=c11 message_sender.c message_slot.h -o message_sender.o
+gcc -O3 -Wall -std=c11 message_reader.c message_slot.h -o message_reader.o
+
+sudo insmod message_slot.ko
+
+python3 ./tester.py
